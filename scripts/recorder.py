@@ -55,6 +55,7 @@ class Recorder():
 
 def start(frequency=0.2):
     rospy.init_node('recorder')
+    rospy.sleep(5)
     rec = Recorder()
     rospy.loginfo('*' * 50)
     rospy.loginfo('Starting session {}'.format(rec.session))
