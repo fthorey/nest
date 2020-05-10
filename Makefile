@@ -11,7 +11,6 @@ DOCKERFILE = ./Dockerfile
 build:
 	$(info *** Building docker image: cthorey/nest)
 	@docker build \
-		--no-cache \
 		--tag cthorey/nest \
 		--file $(DOCKERFILE) .
 
