@@ -1,0 +1,43 @@
+version: '2.0'
+
+networks:
+  ros:
+    driver: bridge
+
+services:
+  ros-master:
+    image: ros:kinetic-ros-core
+    command: stdbuf -o L roscore
+    networks:
+      - ros
+    restart: always
+
+  camera:
+    image: cthorey/nest
+    devices:
+      - /dev/sensors/camera:/dev/sensors/camera
+    depends_on:
+      - ros-master
+    environment:
+      - "ROS_MASTER_URI=http://ros-master:11311"
+      - "ROS_HOSTNAME=camera"
+    command: ./scripts/start_camera.sh
+    networks:
+      - ros
+
+  recorder:
+    image: cthorey/nest
+    depends_on:
+      - ros-master
+    environment:
+      - "ROS_MASTER_URI=http://ros-master:11311"
+      - "ROS_HOSTNAME=recorder"
+    command: python -u scripts/recorder.py --frequency=0.2
+    volumes:
+      - ./data:/workdir/data
+    networks:
+      - ros
+
+
+
+
