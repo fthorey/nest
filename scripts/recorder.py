@@ -68,21 +68,11 @@ class Recorder():
         fname = os.path.join(DATA_FOLDER, self.session, name)
         img.save(fname)
 
-    def is_outlier(self, arr, threshold=10):
-        if self.idx < 100:
-            return False
-        return abs(np.mean(arr) - self.running_mean) > 10
-
     def record_one(self, *args, **kwargs):
         msg = rospy.wait_for_message('/cv_camera/image_raw', Image, timeout=1)
         arr = imgmsg_to_arr(msg)
         img = pImage.fromarray(arr)
         self.save(img, 'image')
-        if self.is_outlier(arr):
-            self.save(img, 'outlier')
-        else:
-            self.running_mean = ALPHA * self.running_mean + (
-                1 - ALPHA) * np.mean(arr)
         self.idx += 1
 
     def callback(self, msg):
