@@ -29,6 +29,7 @@ def imgmsg_to_arr(msg, encoding='rgb8'):
 class Model(object):
     def __init__(self):
         self.model = models.resnet50(pretrained=True)
+        self.model.eval()
         self.transform = T.Compose([
             T.Resize(256),
             T.CenterCrop(224),
@@ -47,7 +48,7 @@ class Model(object):
         mask = np.isin(idxs, self.cls_to_label.keys())
         preds = zip(labels, np.array(probs[mask]))
         preds = sorted(preds, key=lambda x: -x[-1])[0]
-        if preds[1] < 0.6:
+        if preds[1] < 0.25:
             return ''
         return preds[0].replace(' ', '_')
 
