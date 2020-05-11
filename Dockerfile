@@ -19,6 +19,7 @@ RUN apt update &&\
 RUN python2 -m pip install --upgrade pip==9.0.3 && \
   python2 -m pip install --requirement /requirements.txt
 ENV PYTHONPATH=$PYTHONPATH:/workdir
+COPY jupyter_notebook_config.py /root/.jupyter/
 
 # current librry
 WORKDIR /workdir
@@ -26,7 +27,7 @@ COPY scripts /workdir/scripts
 RUN mkdir /workdir/data
 
 
-
+ENV PASSWORD=hello
 COPY scripts/entrypoint.sh /usr/local/bin/entrypoint.sh
 ENTRYPOINT ["/usr/local/bin/entrypoint.sh"]
 CMD ["bash"]
