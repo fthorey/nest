@@ -16,6 +16,7 @@ from sensor_msgs.msg import Image
 from torchvision import models
 from torchvision import transforms as T
 
+ROOT_DIR = '/workdir'
 DATA_FOLDER = '/workdir/data'
 ALPHA = 0.99
 
@@ -36,7 +37,8 @@ class Model(object):
             T.ToTensor(),
             T.Normalize(mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225])
         ])
-        self.cls_to_label = json.load(open('scripts/cls_to_id.json'))
+        self.cls_to_label = json.load(
+            open(os.path.join(ROOT_DIR, 'scripts/cls_to_id.json')))
 
     def detect(self, imgs):
         imgs = torch.stack([self.transform(img) for img in imgs], 0)

@@ -53,6 +53,7 @@ services:
     volumes:
       - ./model:/root/.cache/torch/checkpoints
       - ./data:/workdir/data
+      - ./notebooks:/workdir/notebooks
       - ./scripts:/workdir/scripts
     networks:
       - ros
