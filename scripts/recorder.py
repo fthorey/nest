@@ -69,7 +69,7 @@ class Recorder():
         img.save(fname)
 
     def record_one(self, *args, **kwargs):
-        msg = rospy.wait_for_message('/cv_camera/image_raw', Image, timeout=1)
+        msg = rospy.wait_for_message('/cv_camera/image_raw', Image)
         arr = imgmsg_to_arr(msg)
         img = pImage.fromarray(arr)
         self.save(img, 'image')
