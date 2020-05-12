@@ -46,11 +46,10 @@ class Model(object):
         idxs = np.arange(1000)
         labels = self.cls_to_label.values()
         mask = np.isin(idxs, self.cls_to_label.keys())
-        preds = zip(labels, np.array(probs[mask]))
-        preds = sorted(preds, key=lambda x: -x[-1])[0]
-        if preds[1] < 0.25:
-            return ''
-        return preds[0].replace(' ', '_')
+        p = probs[mask].sum().item()
+        if p > 0.25:
+            return 'cat'
+        return ''
 
 
 class Recorder():
@@ -83,9 +82,6 @@ class Recorder():
         if 'cat' in preds:
             rospy.loginfo('Detected a cat')
             self.save(img, 'cat')
-        elif 'dog' in preds:
-            rospy.loginfo('Detected a dog')
-            self.save(img, 'dog')
         self.detection_idx += 1
         if self.detection_idx % 100 == 0:
             rospy.loginfo('We have been running {} detections so far'.format(
