@@ -17,7 +17,7 @@ COPY requirements.txt /requirements.txt
 RUN apt update &&\
   apt install -y python-pip
 RUN python2 -m pip install --upgrade pip==9.0.3 && \
-  python2 -m pip install --requirement /requirements.txt
+  python2 -m pip install --no-cache-dir --requirement /requirements.txt
 ENV PYTHONPATH=$PYTHONPATH:/workdir
 COPY jupyter_notebook_config.py /root/.jupyter/
 
