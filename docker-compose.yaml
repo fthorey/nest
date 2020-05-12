@@ -15,7 +15,7 @@ services:
   camera:
     image: cthorey/nest
     devices:
-      - /dev/sensors/uwrist_camera:/dev/sensors/camera
+      - /dev/sensors/camera:/dev/sensors/camera
     depends_on:
       - ros-master
     environment:
