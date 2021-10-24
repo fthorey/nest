@@ -19,3 +19,13 @@ install-udev-rules:
 	$(info *** Install udev rule)
 	@sudo cp scripts/10-camera.rules /etc/udev/rules.d/10-camera.rules &&\
 	sudo udevadm control --reload-rules && sudo service udev restart && sudo udevadm trigger
+
+.PHONY: start
+start:
+	$(info *** Start the app)
+	@docker-compose up -d
+
+.PHONY: shutdown
+shutdown:
+	$(info *** Start the app)
+	@docker-compose down

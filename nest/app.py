@@ -9,6 +9,7 @@ from PIL import Image
 import threading
 
 SIZE = (480, 640)
+THRESHOLD = 0.5
 VIEWER_WIDTH = 640
 st.title("Who pee on my door step ?")
 
@@ -46,7 +47,7 @@ def feed():
             time.sleep(1)
             continue
         img = np.frombuffer(data, np.uint8).reshape((480, 640, 3))
-        cats, render = model.detect(img)
+        cats, render = model.detect(img, threshold=THRESHOLD)
         if cats:
             date = datetime.now()
             folder = os.path.join(f"/workdir/data/{date.strftime('%Y-%m-%d')}")
