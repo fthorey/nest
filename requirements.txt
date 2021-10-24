@@ -8,4 +8,4 @@ future
 streamlit
 redis
 hiredis
-git+https://github.com/qubvel/segmentation_models.pytorch
+
