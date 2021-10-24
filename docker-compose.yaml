@@ -1,63 +1,36 @@
 version: '2.0'
 
-networks:
-  ros:
-    driver: bridge
-
 services:
-  ros-master:
-    image: ros:kinetic-ros-core
-    command: stdbuf -o L roscore
-    networks:
-      - ros
-    restart: always
+  
+  redis:
+    network_mode: host
+    container_name: redis
+    image: redis
 
   camera:
     image: cthorey/nest
+    network_mode: host
     devices:
       - /dev/sensors/uwrist_camera:/dev/sensors/camera
-    depends_on:
-      - ros-master
-    environment:
-      - "ROS_MASTER_URI=http://ros-master:11311"
-      - "ROS_HOSTNAME=camera"
-    command: ./scripts/start_camera.sh
-    networks:
-      - ros
-
-  recorder:
-    image: cthorey/nest
-    depends_on:
-      - ros-master
-      - camera
-    environment:
-      - "ROS_MASTER_URI=http://ros-master:11311"
-      - "ROS_HOSTNAME=recorder"
-    command: python -u scripts/recorder.py --frequency=0.2
     volumes:
-      - ./model:/root/.cache/torch/checkpoints
-      - ./data:/workdir/data
-    networks:
-      - ros
+      - /home/cthorey/workdir/nest:/workdir
+    command: ./scripts/start_camera.sh
+    restart: always
+
+  ui:
+    image: cthorey/nest
+    network_mode: host
+    volumes:
+      - /home/cthorey/workdir/nest:/workdir
+    command: streamlit run nest/app.py
 
   jupyter:
     image: cthorey/nest
-    ports:
-      - 8888:8888
-    depends_on:
-      - ros-master
-    environment:
-      - "ROS_MASTER_URI=http://ros-master:11311"
-      - "ROS_HOSTNAME=jupyter"
+    network_mode: host
     command: ./scripts/run_jupyter.sh
     volumes:
-      - ./model:/root/.cache/torch/checkpoints
-      - ./data:/workdir/data
-      - ./notebooks:/workdir/notebooks
-      - ./scripts:/workdir/scripts
-    networks:
-      - ros
-
+      - /home/cthorey/workdir/nest:/workdir
+    
 
 
 

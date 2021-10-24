@@ -1,2 +1,2 @@
 # CAMERA
-SUBSYSTEM=="video4linux", ATTR{name}=="USB2.0 PC CAMERA", MODE="0666", SYMLINK+="sensors/uwrist_camera", GROUP="plugdev"
+SUBSYSTEM=="video4linux", ATTR{name}=="HP HD Camera: HP HD Camera", MODE="0666", SYMLINK+="sensors/uwrist_camera", GROUP="plugdev"

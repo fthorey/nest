@@ -10,8 +10,7 @@
 # stdbuf -oL -eL $@
 
 # setup ros environment
-source "/opt/ros/$ROS_DISTRO/setup.bash"
-source "/catkin_ws/devel/setup.bash"
+source "/opt/ros/noetic/setup.bash"
 # This sets line buffering of stdout and stderr so that ROS output does not
 # get buffered
 stdbuf -oL -eL $@

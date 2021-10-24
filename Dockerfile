@@ -1,23 +1,22 @@
-FROM osrf/ros:kinetic-desktop-full
+FROM osrf/ros:noetic-desktop
+
+RUN apt update && \
+    apt install -y python3-pip git wget cmake curl build-essential libffi-dev libpq-dev && \
+    apt clean
+
+RUN apt update && \
+    apt install -y ros-noetic-camera-info-manager ros-noetic-cv-camera && \
+    apt clean
 
 # change shell
 RUN rm /bin/sh && ln -s /bin/bash /bin/sh
 
-# setup ros
-RUN mkdir /catkin_ws &&\
-  mkdir /catkin_ws/src &&\
-  cd /catkin_ws/src &&\
-  git clone https://github.com/OTL/cv_camera.git
-RUN source /opt/ros/kinetic/setup.bash && \
-  cd /catkin_ws && \
-  catkin_make
-
 # python
 COPY requirements.txt /requirements.txt
-RUN apt update &&\
-  apt install -y python-pip
-RUN python2 -m pip install --upgrade pip==9.0.3 && \
-  python2 -m pip install --no-cache-dir --requirement /requirements.txt
+RUN pip3 install -r /requirements.txt
+RUN pip install -qr https://raw.githubusercontent.com/ultralytics/yolov5/master/requirements.txt
+
+
 ENV PYTHONPATH=$PYTHONPATH:/workdir
 COPY jupyter_notebook_config.py /root/.jupyter/
 
@@ -25,7 +24,6 @@ COPY jupyter_notebook_config.py /root/.jupyter/
 WORKDIR /workdir
 COPY scripts /workdir/scripts
 RUN mkdir /workdir/data
-
 
 ENV PASSWORD=hello
 COPY scripts/entrypoint.sh /usr/local/bin/entrypoint.sh
