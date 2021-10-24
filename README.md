@@ -1,4 +1,5 @@
-# How is peeing on my front door ? 
+[![What cat is peeing on my front door?](https://pimp-my-readme.webapp.io/pimp-my-readme/sliding-text?emojis=1f92f&text=What%2520cat%2520is%2520peeing%2520on%2520my%2520front%2520door%253F)](https://pimp-my-readme.webapp.io)
+
 
 ## Setup 
 
@@ -12,6 +13,7 @@ v4l2-ctl --list-devices
 4. Setup the dev rule and start the stack.
 ```
 make install-dev-rules
+make build
 make start
 ```
 
