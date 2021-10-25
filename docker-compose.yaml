@@ -17,12 +17,19 @@ services:
     command: ./scripts/start_camera.sh
     restart: always
 
+  detector:
+    image: cthorey/nest
+    network_mode: host
+    volumes:
+      - /home/cthorey/workdir/nest:/workdir
+    command: ./scripts/detect.py
+
   ui:
     image: cthorey/nest
     network_mode: host
     volumes:
       - /home/cthorey/workdir/nest:/workdir
-    command: streamlit run nest/app.py
+    command: streamlit run scripts/app.py
 
   jupyter:
     image: cthorey/nest
