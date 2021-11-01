@@ -1,31 +1,21 @@
-FROM osrf/ros:noetic-desktop
-
-RUN apt update && \
-    apt install -y python3-pip git wget cmake curl build-essential libffi-dev libpq-dev && \
-    apt clean
-
-RUN apt update && \
-    apt install -y ros-noetic-camera-info-manager ros-noetic-cv-camera && \
-    apt clean
+FROM python:3.9-slim-buster AS base
 
 # change shell
 RUN rm /bin/sh && ln -s /bin/bash /bin/sh
 
+# Install some deps for outcloud opencv
+RUN export TZ=Europe/Paris
+RUN apt update && \
+    apt install -y curl git build-essential ffmpeg libsm6 libxext6 pkg-config && \
+    apt clean
+
 # python
 COPY requirements.txt /requirements.txt
 RUN pip3 install -r /requirements.txt
-RUN pip install -qr https://raw.githubusercontent.com/ultralytics/yolov5/master/requirements.txt
-
 
 ENV PYTHONPATH=$PYTHONPATH:/workdir
 COPY jupyter_notebook_config.py /root/.jupyter/
 
-# current librry
 WORKDIR /workdir
-COPY scripts /workdir/scripts
-RUN mkdir /workdir/data
-
 ENV PASSWORD=hello
-COPY scripts/entrypoint.sh /usr/local/bin/entrypoint.sh
-ENTRYPOINT ["/usr/local/bin/entrypoint.sh"]
 CMD ["bash"]

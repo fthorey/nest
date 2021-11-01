@@ -1,11 +1,10 @@
-fire
 numpy
 pillow
-jupyterlab
-torch
-torchvision
 future
 streamlit
-redis
-hiredis
+jupyterlab
+streamlit-webrtc
+pydub
+tritonclient[all]
+opencv-python
 

@@ -1,35 +1,25 @@
 version: '2.0'
 
-services:
-  
-  redis:
-    network_mode: host
-    container_name: redis
-    image: redis
-
-  camera:
+services:  
+  app:
     image: cthorey/nest
     network_mode: host
     devices:
       - /dev/sensors/uwrist_camera:/dev/sensors/camera
     volumes:
       - /home/cthorey/workdir/nest:/workdir
-    command: ./scripts/start_camera.sh
-    restart: always
-
-  detector:
-    image: cthorey/nest
-    network_mode: host
-    volumes:
-      - /home/cthorey/workdir/nest:/workdir
-    command: ./scripts/detect.py
-
-  ui:
-    image: cthorey/nest
-    network_mode: host
-    volumes:
-      - /home/cthorey/workdir/nest:/workdir
     command: streamlit run scripts/app.py
+
+  triton:
+    image: nvcr.io/nvidia/tritonserver:21.02-py3
+    shm_size: "16G"
+    network_mode: host
+    ulimits:
+      memlock: -1
+      stack: 67108864
+    volumes:
+      - /home/cthorey/workdir/nest/triton_models:/models
+    command: tritonserver --model-store=/models --log-verbose=2
 
   jupyter:
     image: cthorey/nest
@@ -37,7 +27,3 @@ services:
     command: ./scripts/run_jupyter.sh
     volumes:
       - /home/cthorey/workdir/nest:/workdir
-    
-
-
-

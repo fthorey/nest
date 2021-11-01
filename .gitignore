@@ -1,3 +1,4 @@
 data*
+triton_models/
 notebooks/
 *.pyc
