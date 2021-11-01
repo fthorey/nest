@@ -7,4 +7,5 @@ streamlit-webrtc
 pydub
 tritonclient[all]
 opencv-python
-
+torch
+torchvision
