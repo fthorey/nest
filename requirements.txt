@@ -10,3 +10,4 @@ opencv-python
 torch
 torchvision
 yolov5
+python-box
