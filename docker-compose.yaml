@@ -1,6 +1,11 @@
 version: '2.0'
 
-services:  
+services:
+  redis:
+    network_mode: host
+    container_name: redis
+    image: redis
+
   app:
     image: cthorey/nest
     network_mode: host
@@ -9,6 +14,7 @@ services:
     volumes:
       - /home/cthorey/workdir/nest:/workdir
     command: streamlit run scripts/app.py
+    restart: always
 
   triton:
     image: nvcr.io/nvidia/tritonserver:21.02-py3

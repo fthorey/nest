@@ -1,10 +1,15 @@
 from tritonclient import grpc as triton_client
+import tritonclient
 import numpy as np
 from PIL import Image
 from torchvision import transforms as T
 from yolov5.utils.general import non_max_suppression
 import torch
 from yolov5.utils.plots import Annotator, colors
+import logging
+import time
+
+logger = logging.getLogger(__name__)
 
 NAMES = [
     "person",
@@ -117,6 +122,17 @@ def display(img, pred, names=NAMES):
     return im.astype(np.uint8)
 
 
+def wait_for_triton(url, name):
+    while True:
+        try:
+            client = triton_client.InferenceServerClient(url=url)
+            client.get_model_config(name)
+            break
+        except tritonclient.utils.InferenceServerException:
+            logger.info("Waiting for the triton server")
+            time.sleep(1)
+
+
 class Inference(object):
     conf = 0.25  # NMS confidence threshold
     iou = 0.45  # NMS IoU threshold
@@ -132,13 +148,13 @@ class Inference(object):
         """
         self.name = name
         self.url = url
+        self.client = triton_client.InferenceServerClient(url=self.url)
         self.transforms = get_inference_transform(
             self.get_model_config().config.input[0].dims[1:]
         )
 
     def get_model_config(self):
-        client = triton_client.InferenceServerClient(url=self.url)
-        return client.get_model_config(self.name)
+        return self.client.get_model_config(self.name)
 
     def _format_image(self, img):
         img = np.expand_dims(self.transforms(img).transpose(2, 0, 1), 0)
@@ -152,9 +168,8 @@ class Inference(object):
         return [img], [bbox]
 
     def predict(self, img):
-        client = triton_client.InferenceServerClient(url=self.url)
         ins, outs = self._format_request(img)
-        r = client.infer(
+        r = self.client.infer(
             self.name, ins, request_id="0", model_version="0", outputs=outs
         )
         return r.as_numpy("output__0")

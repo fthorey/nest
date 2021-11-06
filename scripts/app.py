@@ -6,14 +6,15 @@ except ImportError:
     from typing_extensions import Literal  # type: ignore
 import av
 import streamlit as st
-from aiortc.contrib.media import MediaPlayer
 from streamlit_webrtc import (
     RTCConfiguration,
     VideoProcessorBase,
     WebRtcMode,
     webrtc_streamer,
 )
-from nest.inference import Inference
+from nest import inference
+from nest.utils import CustomMediaPlayer
+from aiortc.contrib.media import MediaPlayer
 
 logger = logging.getLogger(__name__)
 RTC_CONFIGURATION = RTCConfiguration(
@@ -25,7 +26,7 @@ def app_streaming():
     """Media streamings"""
 
     def create_player():
-        return MediaPlayer(
+        return CustomMediaPlayer(
             "/dev/sensors/camera",
             format="v4l2",
             options={"video_size": "640x480", "framerate": "30"},
@@ -36,7 +37,7 @@ def app_streaming():
 
         def __init__(self) -> None:
             self.type = "noop"
-            self.model = Inference(name="yolovs", url="192.168.0.25:8001")
+            self.model = inference.Inference(name="yolovs", url="192.168.0.25:8001")
 
         def recv(self, frame: av.VideoFrame) -> av.VideoFrame:
             img = frame.to_ndarray(format="rgb24")
@@ -76,6 +77,8 @@ if __name__ == "__main__":
     )
 
     logger.setLevel(level=logging.DEBUG if DEBUG else logging.INFO)
+
+    inference.wait_for_triton("192.168.0.25:8001", "yolovs")
 
     st_webrtc_logger = logging.getLogger("streamlit_webrtc")
     st_webrtc_logger.setLevel(logging.DEBUG)
