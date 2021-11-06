@@ -14,7 +14,7 @@ if __name__ == "__main__":
         force=True,
     )
 
-    logger.setLevel(level=logging.DEBUG if DEBUG else logging.INFO)
+    logger.setLevel(level=logging.INFO)
 
     detector = Detectron()
     detector.stream()

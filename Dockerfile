@@ -20,6 +20,6 @@ COPY ./scripts/jupyter_notebook_config.py /root/.jupyter/
 WORKDIR /workdir
 COPY . /workdir
 RUN pip install -e .
-
+RUN fc-cache -rv
 ENV PASSWORD=hello
 CMD ["bash"]

@@ -12,7 +12,8 @@ from streamlit_webrtc import (
     WebRtcMode,
     webrtc_streamer,
 )
-from nest.utils import CustomMediaPlayer
+import streamlit as st
+from nest import config
 from aiortc.contrib.media import MediaPlayer
 import redis
 import numpy as np
@@ -25,12 +26,13 @@ RTC_CONFIGURATION = RTCConfiguration(
 
 def app_streaming():
     """Media streamings"""
+    cfg = config.load()
 
     def create_player():
-        return CustomMediaPlayer(
+        return MediaPlayer(
             "/dev/sensors/camera",
             format="v4l2",
-            options={"video_size": "640x480", "framerate": "30"},
+            options={"video_size": f"{cfg.size[0]}x{cfg.size[1]}", "framerate": "30"},
         )
 
     class OpenCVVideoProcessor(VideoProcessorBase):
@@ -42,15 +44,24 @@ def app_streaming():
 
         def recv(self, frame: av.VideoFrame) -> av.VideoFrame:
             img = frame.to_ndarray(format="rgb24")
-            if self.type == "noop":
+            self.rcon.publish("video_track", img.tobytes())
+            if self.type == "raw":
                 pass
-            elif self.type == "yolo":
+            elif self.type == "live":
                 detection = self.rcon.get("detection")
                 if detection is not None:
-                    img = np.frombuffer(detection, np.uint8).reshape((480, 640, 3))
-
+                    img = np.frombuffer(detection, np.uint8).reshape(
+                        (cfg.size[1], cfg.size[0], 3)
+                    )
+            elif self.type == "last_detection":
+                detection = self.rcon.get("last_detection")
+                if detection is not None:
+                    img = np.frombuffer(detection, np.uint8).reshape(
+                        (cfg.size[1], cfg.size[0], 3)
+                    )
             return av.VideoFrame.from_ndarray(img, format="rgb24")
 
+    st.title("Live stream")
     webrtc_ctx = webrtc_streamer(
         key=f"media-streaming-hello",
         mode=WebRtcMode.RECVONLY,
@@ -65,7 +76,7 @@ def app_streaming():
 
     if webrtc_ctx.video_processor:
         webrtc_ctx.video_processor.type = st.radio(
-            "Select transform type", ("noop", "yolo")
+            "Select transform type", ("raw", "live", "last_detection")
         )
 
 

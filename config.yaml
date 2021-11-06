@@ -1,0 +1,11 @@
+size: [640, 480]
+redis:
+  host: 192.168.0.25
+  port: 6379
+inference:
+  url: "192.168.0.25:8001"
+  name: "yolovs"
+  object_id: [0, 15]
+  threshold: 0.1
+  
+
