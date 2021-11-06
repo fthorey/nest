@@ -39,8 +39,7 @@ output [
 instance_group [
     {{
         count: {engine_count}
-        kind: KIND_GPU
-        gpus: [ {gpu_list} ]
+        kind: KIND_CPU
     }}
 ]"""
 
