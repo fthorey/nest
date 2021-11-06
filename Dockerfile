@@ -18,5 +18,8 @@ ENV PYTHONPATH=$PYTHONPATH:/workdir
 COPY ./scripts/jupyter_notebook_config.py /root/.jupyter/
 
 WORKDIR /workdir
+COPY . /workdir
+RUN pip install -e .
+
 ENV PASSWORD=hello
 CMD ["bash"]

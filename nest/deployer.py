@@ -11,7 +11,7 @@ from torch.utils.data import DataLoader
 from nest import deployer
 from yolov5 import export
 
-
+IMG_SIZE = (640, 480)
 torch_type_to_triton_type = {
     torch.bool: "TYPE_BOOL",
     torch.int8: "TYPE_INT8",
@@ -547,14 +547,17 @@ class Deployer(object):
 
 
 class YoloDataset(Dataset):
+    def __init__(self, size=(640, 640)):
+        self.size = size
+
     def __len__(self):
         return 2
 
     def __getitem__(self, idx):
-        return torch.zeros(3, 640, 640).float()
+        return torch.zeros(3, *self.size).float()
 
 
-def get_model(device="cpu", batch_size=1, imgsz=(640, 640)):
+def get_model(device="cpu", batch_size=1, imgsz=(480, 640)):
     torch.hub.load("ultralytics/yolov5", "yolov5s")
     weights = "/root/.cache/torch/hub/ultralytics_yolov5_master/yolov5s.pt"
     device = export.select_device(device)
@@ -578,17 +581,17 @@ def get_model(device="cpu", batch_size=1, imgsz=(640, 640)):
 
 
 class Wrapper(nn.Module):
-    def __init__(self):
+    def __init__(self, size):
         super().__init__()
-        self.model = get_model()
+        self.model = get_model(imgsz=size)
 
     def forward(self, x):
         return self.model(x)[0]
 
 
-def to_triton(method="trace", max_batch_size=1):
-    m = Wrapper()
-    ds = YoloDataset()
+def to_triton(method="trace", max_batch_size=1, size=(480, 640)):
+    m = Wrapper(size)
+    ds = YoloDataset(size)
     dl = DataLoader(
         ds,
         batch_size=max_batch_size,
