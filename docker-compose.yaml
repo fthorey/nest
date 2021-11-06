@@ -16,6 +16,14 @@ services:
     command: streamlit run scripts/app.py
     restart: always
 
+  detector:
+    image: cthorey/nest
+    network_mode: host
+    volumes:
+      - /home/cthorey/workdir/nest:/workdir
+    command: python -u /workdir/scripts/detect.py
+    restart: always
+
   triton:
     image: nvcr.io/nvidia/tritonserver:21.02-py3
     shm_size: "16G"

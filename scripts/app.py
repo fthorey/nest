@@ -12,9 +12,10 @@ from streamlit_webrtc import (
     WebRtcMode,
     webrtc_streamer,
 )
-from nest import inference
 from nest.utils import CustomMediaPlayer
 from aiortc.contrib.media import MediaPlayer
+import redis
+import numpy as np
 
 logger = logging.getLogger(__name__)
 RTC_CONFIGURATION = RTCConfiguration(
@@ -37,14 +38,17 @@ def app_streaming():
 
         def __init__(self) -> None:
             self.type = "noop"
-            self.model = inference.Inference(name="yolovs", url="192.168.0.25:8001")
+            self.rcon = redis.Redis()
 
         def recv(self, frame: av.VideoFrame) -> av.VideoFrame:
             img = frame.to_ndarray(format="rgb24")
             if self.type == "noop":
                 pass
-            elif self.type == "yolo" and self.model is not None:
-                img = self.model.predict_image(img)
+            elif self.type == "yolo":
+                detection = self.rcon.get("detection")
+                if detection is not None:
+                    img = np.frombuffer(detection, np.uint8).reshape((480, 640, 3))
+
             return av.VideoFrame.from_ndarray(img, format="rgb24")
 
     webrtc_ctx = webrtc_streamer(
@@ -77,8 +81,6 @@ if __name__ == "__main__":
     )
 
     logger.setLevel(level=logging.DEBUG if DEBUG else logging.INFO)
-
-    inference.wait_for_triton("192.168.0.25:8001", "yolovs")
 
     st_webrtc_logger = logging.getLogger("streamlit_webrtc")
     st_webrtc_logger.setLevel(logging.DEBUG)

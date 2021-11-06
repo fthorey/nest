@@ -54,7 +54,8 @@ def player_worker(
                 video_first_pts = frame.pts
             frame.pts -= video_first_pts
             try:
-                redis_con.publish("video_track", frame.to_ndarray().tobytes())
+                arr = frame.to_ndarray(format="rgb24")
+                redis_con.publish("video_track", arr.tobytes())
             except:
                 logger.info("Failed to publish on redis")
 

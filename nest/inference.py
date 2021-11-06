@@ -167,16 +167,16 @@ class Inference(object):
         bbox = triton_client.InferRequestedOutput("output__0")
         return [img], [bbox]
 
-    def predict(self, img):
+    def _predict(self, img):
         ins, outs = self._format_request(img)
         r = self.client.infer(
             self.name, ins, request_id="0", model_version="0", outputs=outs
         )
         return r.as_numpy("output__0")
 
-    def predict_image(self, img: np.array):
+    def predict(self, img: np.array):
         img = Image.fromarray(img)
-        bbox = self.predict(img)
+        bbox = self._predict(img)
         bbox = non_max_suppression(
             torch.from_numpy(bbox),
             self.conf,
@@ -185,4 +185,4 @@ class Inference(object):
             multi_label=self.multi_label,
             max_det=self.max_det,
         )[0]
-        return display(self.transforms(img) * 255, bbox)
+        return bbox, display(self.transforms(img) * 255, bbox)
