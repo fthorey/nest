@@ -81,7 +81,7 @@ class Detectron(object):
         self._frame = None
         sub.subscribe(**{"video_track": self.handler})
         sub.run_in_thread(sleep_time=SLEEP)
-        logger.info("Succesfulluy initialized detectron")
+        logger.info("Succesfully initialized detectron")
 
     def handler(self, msg):
         if (msg is None) or (not isinstance(msg["data"], bytes)):
