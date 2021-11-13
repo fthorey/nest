@@ -12,7 +12,7 @@ services:
     devices:
       - /dev/sensors/uwrist_camera:/dev/sensors/camera
     volumes:
-      - /home/cthorey/workdir/nest:/workdir
+      - /home/florian/workdir/nest:/workdir
     command: streamlit run scripts/app.py
     restart: always
 
@@ -20,7 +20,7 @@ services:
     image: cthorey/nest
     network_mode: host
     volumes:
-      - /home/cthorey/workdir/nest:/workdir
+      - /home/florian/workdir/nest:/workdir
     command: python -u /workdir/scripts/detect.py
     restart: always
 
@@ -32,7 +32,7 @@ services:
       memlock: -1
       stack: 67108864
     volumes:
-      - /home/cthorey/workdir/nest/triton_models:/models
+      - /home/florian/workdir/nest/triton_models:/models
     command: tritonserver --model-store=/models --log-verbose=2
 
   jupyter:
@@ -40,4 +40,4 @@ services:
     network_mode: host
     command: ./scripts/run_jupyter.sh
     volumes:
-      - /home/cthorey/workdir/nest:/workdir
+      - /home/florian/workdir/nest:/workdir
