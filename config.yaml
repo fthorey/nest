@@ -5,7 +5,7 @@ redis:
 inference:
   url: "localhost:8001"
   name: "yolovs"
-  object_id: [0, 15]
+  object_id: [14, 15, 16, 17, 18, 19, 20, 21, 22, 23]
   threshold: 0.1
   
 

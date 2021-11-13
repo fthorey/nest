@@ -12,30 +12,30 @@ import time
 logger = logging.getLogger(__name__)
 
 NAMES = [
-    "person",
-    "bicycle",
-    "car",
-    "motorcycle",
-    "airplane",
-    "bus",
-    "train",
-    "truck",
-    "boat",
-    "traffic light",
-    "fire hydrant",
-    "stop sign",
-    "parking meter",
-    "bench",
-    "bird",
-    "cat",
-    "dog",
-    "horse",
-    "sheep",
-    "cow",
-    "elephant",
-    "bear",
-    "zebra",
-    "giraffe",
+    "person", #0
+    "bicycle", #1
+    "car", #2
+    "motorcycle", #3
+    "airplane", #4
+    "bus", #5
+    "train", #5
+    "truck", #7
+    "boat", #8
+    "traffic light", #9
+    "fire hydrant", #10
+    "stop sign", #11
+    "parking meter", #12
+    "bench", #13
+    "bird", #14
+    "cat", #15
+    "dog", #16
+    "horse", #17
+    "sheep", #18
+    "cow", #19
+    "elephant", #20
+    "bear", #21
+    "zebra", #22
+    "giraffe", #23
     "backpack",
     "umbrella",
     "handbag",
@@ -136,7 +136,7 @@ def wait_for_triton(url, name):
 class Inference(object):
     conf = 0.25  # NMS confidence threshold
     iou = 0.45  # NMS IoU threshold
-    classes = None  # (optional list) filter by class, i.e. = [0, 15, 16] for COCO persons, cats and dogs
+    classes = None  # (optional list) filter by class, i.e. = [0, 15, 16] for  persons, cats and dogs
     multi_label = False  # NMS multiple labels per box
     max_det = 1000  # maximum number of detections per image
 
